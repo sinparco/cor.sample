@@ -1,0 +1,53 @@
+install.packages("devtools")
+devtools::install_github("dstanley4/learnSampling")
+library(learnSampling)
+library(ggplot2)
+
+#### Scenario 1 ####
+
+get_cor_samples(rho = .35, n=30, number.of.samples = 1)
+my.samples <- get_cor_samples( rho = .35, n=30, number.of.samples = 1000)
+
+my.samples.sorted <- sort_samples_by_r(my.samples)
+print(my.samples.sorted)
+
+#Visualizing the Distribution
+plot1 <- qplot(r, data=my.samples.sorted,binwidth=.05)
+plot1 <- plot1 + coord_cartesian(xlim = c(-.40, .75), ylim=c(0,300))
+plot1 <- plot1 + ggtitle("Replications n = 30")
+print(plot1)
+
+#Descriptive Statistics
+mean(my.samples.sorted$r)
+var(my.samples.sorted$r)
+
+#### Scenario 2 ####
+my.samples.large <- get_cor_samples(rho =.35, n=75, number.of.samples = 1000)
+my.samples.large.sorted <- sort_samples_by_r(my.samples.large)
+
+#Visualizing the Distribution
+plot2 <- qplot(r,data=my.samples.large.sorted,binwidth=.05)
+plot2 <- plot2 + coord_cartesian(xlim=c(-.40, .75),ylim=c(0,300))
+plot2 <- plot2 +ggtitle("Replications n =75")
+print(plot2)
+
+#### Scenario 3 ####
+my.samples.large <- get_cor_samples(rho =.35, n=150, number.of.samples = 1000)
+my.samples.large.sorted <- sort_samples_by_r(my.samples.large)
+
+#Visualizing the Distribution
+plot3 <- qplot(r,data=my.samples.large.sorted,binwidth=.05)
+plot3 <- plot3+ coord_cartesian(xlim=c(-.40, .75),ylim=c(0,300))
+plot3 <- plot3 +ggtitle("Replications n =150")
+print(plot3)
+
+install.packages('gridExtra')
+library(gridExtra)
+grid.arrange(plot1, plot2, plot3, nrow=2)
+
+#### Scenario 4 ####
+my.samples.vary <- get_cor_samples(rho= .35, n.min=50, n.max=1000, number.of.samples = 1000)
+plot4 <- qplot(r, n, data=my.samples.vary)
+plot4 <- plot4 + ggtitle("Observed Correlation by Sample Size")
+print(plot4)
+weighted.mean(my.samples.vary$r,w=my.samples.vary$n)
